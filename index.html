@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <h1>📋 Task Manager</h1>
+                <div class="header-buttons">
+                    <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle dark/light mode" aria-label="Toggle theme">🌙</button>
+                    <button class="download-btn" title="Download tasks">⬇️</button>
+                </div>
+            </div>
+            <p class="task-counter">
+                <span id="completedCount">0</span> of <span id="totalCount">0</span> tasks completed
+            </p>
+        </header>
+
+        <!-- Input Section -->
+        <section class="input-section">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="taskInput" 
+                    placeholder="Add a new task..." 
+                    class="task-input"
+                    autocomplete="off"
+                >
+                <select id="prioritySelect" class="priority-select">
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <input 
+                    type="date" 
+                    id="dueDateInput" 
+                    class="due-date-input"
+                >
+                <button id="addTaskBtn" class="add-btn">Add Task</button>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search tasks..."
+                    class="search-input"
+                    autocomplete="off"
+                >
+                <button id="clearSearchBtn" class="clear-btn" style="display: none;">✕</button>
+            </div>
+        </section>
+
+        <!-- Filter Buttons -->
+        <section class="filter-section">
+            <div class="status-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="active">Active</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+            </div>
+        </section>
+
+        <!-- Date Filter Section -->
+        <section class="date-filter-section">
+            <div class="date-filter-toggle">
+                <button class="date-filter-btn" data-date-filter="all-dates">📅 All Dates</button>
+                <button class="date-filter-btn" data-date-filter="overdue">⚠️ Overdue</button>
+                <button class="date-filter-btn" data-date-filter="today">📌 Today</button>
+                <button class="date-filter-btn" data-date-filter="this-week">📆 This Week</button>
+                <button class="date-filter-btn" data-date-filter="later">⏳ Later</button>
+                <button class="date-filter-btn" data-date-filter="no-date">∅ No Due Date</button>
+            </div>
+
+            <!-- Custom Date Range -->
+            <div class="date-range-picker" style="display: none;">
+                <label for="dateRangeStart">From:</label>
+                <input 
+                    type="date" 
+                    id="dateRangeStart" 
+                    class="date-range-input"
+                >
+                <label for="dateRangeEnd">To:</label>
+                <input 
+                    type="date" 
+                    id="dateRangeEnd" 
+                    class="date-range-input"
+                >
+                <button id="clearDateRangeBtn" class="clear-date-range-btn">Clear Range</button>
+            </div>
+
+            <!-- Custom Range Trigger -->
+            <button id="customRangeToggle" class="custom-range-toggle">+ Custom Range</button>
+        </section>
+
+        <!-- Tasks List -->
+        <section class="tasks-section">
+            <div id="tasksList" class="tasks-list">
+                <div class="empty-state">
+                    <p>✨ No tasks yet. Add one above to get started!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div id="editOverlay" class="edit-overlay" style="display: none;">
+        <div class="edit-modal">
+            <button id="closeEditBtn" class="edit-close-btn" aria-label="Close edit">✕</button>
+            <h2>✏️ Edit Task</h2>
+            <form id="editForm" class="edit-form">
+                <div class="form-group">
+                    <label for="editTaskInput">Task Title</label>
+                    <input 
+                        type="text" 
+                        id="editTaskInput" 
+                        class="edit-input"
+                        required
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="editPrioritySelect">Priority</label>
+                    <select id="editPrioritySelect" class="edit-select">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDueDateInput">Due Date (Optional)</label>
+                    <input 
+                        type="date" 
+                        id="editDueDateInput" 
+                        class="edit-input"
+                    >
+                </div>
+                <div class="edit-actions">
+                    <button type="submit" class="edit-save-btn">Save Changes</button>
+                    <button type="button" id="cancelEditBtn" class="edit-cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Help Overlay Modal -->
+    <div id="helpOverlay" class="help-overlay" style="display: none;">
+        <div class="help-modal">
+            <button id="closeHelpBtn" class="help-close-btn" aria-label="Close help">✕</button>
+            <h2>⌨️ Keyboard Shortcuts</h2>
+            <div class="shortcuts-list">
+                <div class="shortcut-item">
+                    <kbd>Ctrl</kbd> + <kbd>N</kbd>
+                    <span>Focus task input</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                    <span>Focus search input</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Esc</kbd>
+                    <span>Clear filters</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>?</kbd>
+                    <span>Show this help overlay</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
